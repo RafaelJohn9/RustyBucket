@@ -173,3 +173,7 @@ classDiagram
 > 🧠 _“A kitchen is not just about cooking. It’s about love, chaos, and a really good system.” — Remy (probably)_
 
 ---
+
+## 🍽️ See It In Action
+
+Curious how Remy’s kitchen magic looks in the terminal? Check out [EXPECTED.md](./EXPECTED.md) for a taste of the CLI experience — sample commands, outputs, and a dash of chef-y flair. Bon appétit!
