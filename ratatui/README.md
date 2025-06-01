@@ -10,6 +10,8 @@ It’s a cozy night in Paris. The Eiffel Tower sparkles like a sugar-dusted croi
 
 Behind the scenes of Remy’s famed restaurant, it’s all **pasta and panic**.
 
+![Remy in action, stirring up chaos and cuisine](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2ZyZ2Zvajd3cmNtaXR0eWZlamR4eGl4Mmp2eTM0bTM2MGJ6amhmcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wNDa1OZtvl6Fi/giphy.gif)
+
 ---
 
 ### 🎭 Cast of Chaos
@@ -22,6 +24,8 @@ Behind the scenes of Remy’s famed restaurant, it’s all **pasta and panic**.
 ---
 
 ### 🧾 The Problem: A Spaghetti Mess
+
+![Remy and Linguini in a flurry of kitchen chaos](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExODE5dXpmZDg5emxxdGY4cjFkcDAwemMwcDhoNTVhMmZhM2lyMWJ5ciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5Wyv8urxxclm8/giphy.gif)
 
 Remy’s cooking is still world-class, but the kitchen is running on **chaotic scribbles and desperate guesses**:
 
@@ -58,6 +62,8 @@ Cue gasps.
 
 You — a bright young rat coder from the colony — have been called in by Remy himself. He needs you to build the **first ever kitchen command center**, powered by Rust.
 
+![Remy and the rats plotting their next move](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjZqMTIyOHIzOW8yZGZ0MDZmbW96b3RrNWc3cTlzNWthbDc4YjRudCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5svOFZB43VHDW/giphy.gif)
+
 You’re not building the entire Eiffel Tower here — just something to help with:
 
 * 🧾 **Tracking customer orders**
@@ -78,3 +84,9 @@ Feel free to add:
 * A *daily quote from Gusteau* as startup flavor text.
 
 ---
+
+### 🗺️ Where to Next?
+
+Ready to stir the pot? Head over to [`PLANNING.md`](./PLANNING.md) for your secret recipe of tasks, tips, and rat-approved strategies. That’s where the real kitchen magic begins!
+
+Bon appétit, code chef! 🧑‍🍳🐭
