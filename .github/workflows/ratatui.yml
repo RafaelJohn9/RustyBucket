@@ -38,7 +38,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const core = require('@actions/core');
             const fs = require('fs');
             const failed = core.getInput('failed') || process.env.TEST_FAILED || (process.env['TEST_FAILED'] === 'true');
             if (failed === 'true' || steps?.test?.outputs?.failed === 'true') {
