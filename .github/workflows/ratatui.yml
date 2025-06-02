@@ -48,24 +48,35 @@ jobs:
             echo "content=No test output file found" >> $GITHUB_OUTPUT
           fi
 
-      - name: 💬 Comment on PR if Tests Failed
+      - name: 💬 Update or Create PR Comment for Failed Tests
+        if: steps.test.outputs.failed == 'true'
+        uses: peter-evans/find-comment@v2
+        id: find-comment-fail
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: "### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!"
+
+      - name: 💬 Create or Update Failed Test Comment
         if: steps.test.outputs.failed == 'true'
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          comment-id: ${{ steps.find-comment-fail.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
           body: |
-            ### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!
+        ### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!
 
-            ```
-            ${{ steps.testout.outputs.content }}
-            ```
+        ```
+        ${{ steps.testout.outputs.content }}
+        ```
 
-            👨‍🍳 Remy says: _"Zut alors! The soufflé has collapsed!"_
+        👨‍🍳 Remy says: _"Zut alors! The soufflé has collapsed!"_
 
-            🔁 Please whisk away the bugs and push again for another taste test in Remy's kitchen!
+        🔁 Please whisk away the bugs and push again for another taste test in Remy's kitchen!
 
-            > _Anyone can cook, but only the bravest can debug!_
+        > _Anyone can cook, but only the bravest can debug!_
 
       - name: 💬 Comment on PR if Tests Passed
         if: steps.test.outputs.failed == 'false'
