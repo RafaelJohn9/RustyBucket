@@ -28,23 +28,22 @@ jobs:
         working-directory: ./ratatui
         run: |
           echo "🎬 Running cargo tests..."
-          TEST_OUTPUT=$(cargo test -- --nocapture 2>&1)
-          echo "$TEST_OUTPUT" > test_output.txt
-
-          if [ $? -ne 0 ]; then
-            echo "::set-output name=failed::true"
-          else
-            echo "::set-output name=failed::false"
-          fi
+          cargo test -- --nocapture 2>&1 | tee test_output.txt
+          echo "failed=$([ $? -eq 0 ] && echo "false" || echo "true")" >> $GITHUB_OUTPUT
 
       - name: 📦 Read test output
         # if: steps.test.outputs.failed == 'true'
         id: testout
         working-directory: ./ratatui
+        shell: bash
         run: |
-          echo "content<<EOF" >> $GITHUB_OUTPUT
-          tail -n 50 test_output.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          if [ -f test_output.txt ]; then
+            echo "content<<EOF" >> $GITHUB_OUTPUT
+            tail -n 50 test_output.txt >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "content=No test output file found" >> $GITHUB_OUTPUT
+          fi
 
       - name: 💬 Comment on PR if Tests Failed
         # if: steps.test.outputs.failed == 'true'
