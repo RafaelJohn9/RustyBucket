@@ -48,7 +48,7 @@ impl Main {
                     }
                 }
                 "3" => {
-                    orders.update_status(&mut orders);
+                    orders.update_status();
                 }
                 "4" => {
                     kitchen.prepare_order(&mut orders);
