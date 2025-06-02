@@ -54,7 +54,7 @@ impl Main {
                     kitchen.prepare_order(&mut orders);
                 }
                 "5" => {
-                    kitchen.complete_order();
+                    kitchen.complete_order(&mut orders);
                 }
                 "6" => {
                     println!("{}", quotes.get_random_quote());
