@@ -55,6 +55,16 @@ pub struct Order {
     pub status: OrderStatus,
 }
 
+impl Order {
+    pub fn new(table: u32, dish: Dish) -> Self {
+        Order {
+            table,
+            dish,
+            status: OrderStatus::Pending,
+        }
+    }
+}
+
 pub struct Orders {
     pub orders: Vec<Order>,
 }
