@@ -31,31 +31,6 @@ impl Orders {
         false
     }
 
-    pub fn remove_order_by_table_id(&mut self, table_id: u32) -> Option<Order> {
-        if let Some(pos) = self.orders.iter().position(|o| o.table == table_id) {
-            Some(self.orders.remove(pos))
-        } else {
-            None
-        }
-    }
-
-    // Prints all orders in the Orders collection
-    pub fn print_all(&self) {
-        if self.orders.is_empty() {
-            println!("No orders to display.");
-        } else {
-            for (i, order) in self.orders.iter().enumerate() {
-                println!(
-                    "Order {}: Table {}, Dish: {:?}, Status: {:?}",
-                    i + 1,
-                    order.table,
-                    order.dish,
-                    order.status
-                );
-            }
-        }
-    }
-
     pub fn get_order_for_table(&self, table_id: u32) -> Option<&Order> {
         self.orders.iter().find(|o| o.table == table_id)
     }
