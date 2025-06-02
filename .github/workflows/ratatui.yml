@@ -3,7 +3,7 @@ name: Ratatui PR Tests
 on:
   pull_request:
     branches: [main]
-
+    workflow_dispatch:
 jobs:
   run-tests:
     name: Check PR and Run Tests
