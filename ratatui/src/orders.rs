@@ -31,12 +31,11 @@ impl Orders {
         false
     }
 
-    pub fn remove_order_by_table_id(&mut self, table: u32) -> bool {
-        if let Some(pos) = self.orders.iter().position(|o| o.table == table) {
-            self.orders.remove(pos);
-            true
+    pub fn remove_order_by_table_id(&mut self, table_id: u32) -> Option<Order> {
+        if let Some(pos) = self.orders.iter().position(|o| o.table == table_id) {
+            Some(self.orders.remove(pos))
         } else {
-            false
+            None
         }
     }
 }
