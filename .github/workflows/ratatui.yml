@@ -3,7 +3,8 @@ name: Ratatui PR Tests
 on:
   pull_request:
     branches: [main]
-    workflow_dispatch:
+  workflow_dispatch:
+
 jobs:
   run-tests:
     name: Check PR and Run Tests
@@ -28,35 +29,37 @@ jobs:
           echo "🎬 Running cargo tests..."
           TEST_OUTPUT=$(cargo test -- --nocapture 2>&1)
           echo "$TEST_OUTPUT" > test_output.txt
-          echo "$TEST_OUTPUT"
-          echo "##[set-output name=failed::$([ $? -ne 0 ] && echo true || echo false)]"
-          echo "##[set-output name=stdout::$TEST_OUTPUT]"
+
+          if [ $? -ne 0 ]; then
+            echo "failed=true" >> $GITHUB_OUTPUT
+          else
+            echo "failed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📦 Read test output
+        if: steps.test.outputs.failed == 'true'
+        id: testout
+        working-directory: ./ratatui
+        run: |
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          tail -n 50 test_output.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: 💬 Comment on PR if Tests Failed
-        if: always()
-        uses: actions/github-script@v7
+        if: steps.test.outputs.failed == 'true'
+        uses: peter-evans/create-or-update-comment@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const failed = '${{ steps.test.outputs.failed }}';
-            if (failed === 'true') {
-              const output = fs.readFileSync('test_output.txt', 'utf8');
-              const comment = [
-                "### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!",
-                        "",
-                        "```\n" + output + "\n```",
-                        "",
-                        "👨‍🍳 Remy says: 'Zut alors! The soufflé has collapsed!'",
-                        "🔁 Please whisk away the bugs and push again for another taste test in Remy's kitchen!",
-                        "",
-                        "> _Anyone can cook, but only the bravest can debug!_"
-              ].join('\n');
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!
 
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: comment
-              });
-            }
+            ```
+            ${{ steps.testout.outputs.content }}
+            ```
+
+            👨‍🍳 Remy says: _"Zut alors! The soufflé has collapsed!"_
+
+            🔁 Please whisk away the bugs and push again for another taste test in Remy's kitchen!
+
+            > _Anyone can cook, but only the bravest can debug!_
