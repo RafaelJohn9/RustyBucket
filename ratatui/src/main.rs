@@ -1,6 +1,6 @@
 use kitchen::Kitchen;
 use menu::Menu;
-use orders::Orders;
+use orders::{Order, Orders};
 use quotes::Quotes;
 use std::io::Write;
 
