@@ -16,7 +16,7 @@ impl Main {
         let dishes = vec![];
         let mut menu = Menu::new(dishes);
         let mut orders = Orders::new();
-        let mut kitchen = Kitchen::new(&mut orders);
+        let mut kitchen = Kitchen::new(orders);
         let quotes = Quotes::new();
 
         loop {
