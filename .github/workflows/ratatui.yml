@@ -24,9 +24,7 @@ jobs:
       - name: 🧪 Run Tests
         id: test
         working-directory: ./ratatui
-        continue-on-error: true
         run: |
-          set +e
           echo "🎬 Running cargo tests..."
           TEST_OUTPUT=$(cargo test -- --nocapture 2>&1)
           echo "$TEST_OUTPUT" > test_output.txt
