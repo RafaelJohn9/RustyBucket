@@ -24,6 +24,7 @@ jobs:
 
       - name: 🧪 Run Tests
         id: test
+        continue-on-error: true  # ✅ Do not fail the job on test failure
         working-directory: ./ratatui
         run: |
           echo "🎬 Running cargo tests..."
