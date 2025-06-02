@@ -44,15 +44,15 @@ jobs:
             const jokeLines = output
               .split('\n')
               .filter(line => line.includes('🐀') || line.includes('🍿') || line.includes('Chef'));
-            const comment = `
-### 🚨 Tests Failed!
-
-${jokeLines.slice(-10).join('\n')}
-
-🔁 Fix the issue and push again for another go at Remy's kitchen!
-
-> _Remember: Anyone can cook, but not everyone can assert output._
-`;
+            const comment = [
+              "### 🚨 Tests Failed!",
+              "",
+              ...jokeLines.slice(-10),
+              "",
+              "🔁 Fix the issue and push again for another go at Remy's kitchen!",
+              "",
+              "> _Remember: Anyone can cook, but not everyone can assert output._"
+            ].join('\n');
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -60,4 +60,3 @@ ${jokeLines.slice(-10).join('\n')}
               repo: context.repo.repo,
               body: comment
             });
-
