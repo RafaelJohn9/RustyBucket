@@ -33,29 +33,33 @@ jobs:
           echo "##[set-output name=stdout::$TEST_OUTPUT]"
 
       - name: 💬 Comment on PR if Tests Failed
-        if: steps.test.outputs.failed == 'true'
+        if: always()  # Always run this step, but check test result inside
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const core = require('@actions/core');
             const fs = require('fs');
-            const output = fs.readFileSync('test_output.txt', 'utf8');
-            const jokeLines = output
-              .split('\n')
-              .filter(line => line.includes('🐀') || line.includes('🍿') || line.includes('Chef'));
-            const comment = [
-              "### 🚨 Tests Failed!",
-              "",
-              ...jokeLines.slice(-10),
-              "",
-              "🔁 Fix the issue and push again for another go at Remy's kitchen!",
-              "",
-              "> _Remember: Anyone can cook, but not everyone can assert output._"
-            ].join('\n');
+            const failed = core.getInput('failed') || process.env.TEST_FAILED || (process.env['TEST_FAILED'] === 'true');
+            if (failed === 'true' || steps?.test?.outputs?.failed === 'true') {
+              const output = fs.readFileSync('test_output.txt', 'utf8');
+              const jokeLines = output
+                .split('\n')
+                .filter(line => line.includes('🐀') || line.includes('🍿') || line.includes('Chef'));
+              const comment = [
+                "### 🚨 Tests Failed!",
+                "",
+                ...jokeLines.slice(-10),
+                "",
+                "🔁 Fix the issue and push again for another go at Remy's kitchen!",
+                "",
+                "> _Remember: Anyone can cook, but not everyone can assert output._"
+              ].join('\n');
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
