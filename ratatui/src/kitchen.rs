@@ -9,8 +9,8 @@ impl Kitchen {
         Kitchen { current_orders }
     }
 
-    pub fn prepare_order(&mut self, order: Order) {
-        self.current_orders.add_order(order); // Use Orders' method
+    pub fn show_all_orders(&self) {
+        self.current_orders.print_all();
     }
 
     pub fn complete_order(&mut self, table_id: usize) -> Option<Order> {
