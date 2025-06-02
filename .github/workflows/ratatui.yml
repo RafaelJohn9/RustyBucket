@@ -38,7 +38,7 @@ jobs:
           fi
 
       - name: 📦 Read test output
-        if: steps.test.outputs.failed == 'true'
+        # if: steps.test.outputs.failed == 'true'
         id: testout
         working-directory: ./ratatui
         run: |
@@ -47,7 +47,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: 💬 Comment on PR if Tests Failed
-        if: steps.test.outputs.failed == 'true'
+        # if: steps.test.outputs.failed == 'true'
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
