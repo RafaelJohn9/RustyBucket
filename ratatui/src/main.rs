@@ -40,7 +40,8 @@ impl Main {
                     let dish_idx: usize = dish_input.trim().parse().unwrap_or(0);
 
                     if let Some(dish) = menu.dishes.get(dish_idx) {
-                        orders.add_order(table, dish);
+                        let order = Order::new(table, dish.clone());
+                        orders.add_order(order);
                         println!("Order added!");
                     } else {
                         println!("Invalid dish number.");
