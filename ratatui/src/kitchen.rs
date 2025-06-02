@@ -14,6 +14,7 @@ impl Kitchen {
     }
 
     pub fn complete_order(&mut self, table_id: usize) -> Option<Order> {
-        self.current_orders.remove_order_by_table_id(table_id)
+        self.current_orders
+            .remove_order_by_table_id(table_id as u32)
     }
 }
