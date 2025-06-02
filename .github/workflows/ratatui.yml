@@ -64,19 +64,19 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           comment-id: ${{ steps.find-comment-fail.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          edit-mode: replace
-          body: |
-        ### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!
+        edit-mode: replace
+        body: |
+          ### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!
 
-        ```
-        ${{ steps.testout.outputs.content }}
-        ```
+          ```
+          ${{ steps.testout.outputs.content }}
+          ```
 
-        👨‍🍳 Remy says: _"Zut alors! The soufflé has collapsed!"_
+          👨‍🍳 Remy says: _"Zut alors! The soufflé has collapsed!"_
 
-        🔁 Please whisk away the bugs and push again for another taste test in Remy's kitchen!
+          🔁 Please whisk away the bugs and push again for another taste test in Remy's kitchen!
 
-        > _Anyone can cook, but only the bravest can debug!_
+          > _Anyone can cook, but only the bravest can debug!_
 
       - name: 💬 Comment on PR if Tests Passed
         if: steps.test.outputs.failed == 'false'
