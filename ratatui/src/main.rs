@@ -40,7 +40,7 @@ impl Main {
                     let dish_idx: usize = dish_input.trim().parse().unwrap_or(0);
 
                     if let Some(dish) = menu.dishes.get(dish_idx) {
-                        let order = Order::new(table, &mut dish);
+                        let order = Order::new(table, dish);
                         orders.add_order(order);
                         println!("Order added!");
                     } else {
