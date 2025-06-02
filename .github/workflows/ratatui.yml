@@ -32,9 +32,9 @@ jobs:
           echo "$TEST_OUTPUT" > test_output.txt
 
           if [ $? -ne 0 ]; then
-            echo "failed=true" >> $GITHUB_OUTPUT
+            echo "::set-output name=failed::true"
           else
-            echo "failed=false" >> $GITHUB_OUTPUT
+            echo "::set-output name=failed::false"
           fi
 
       - name: 📦 Read test output
@@ -45,6 +45,8 @@ jobs:
           echo "content<<EOF" >> $GITHUB_OUTPUT
           tail -n 50 test_output.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+        outputs:
+          content: ${{ steps.testout.outputs.content }}
 
       - name: 💬 Comment on PR if Tests Failed
         if: steps.test.outputs.failed == 'true'
