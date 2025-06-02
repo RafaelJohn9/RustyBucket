@@ -45,8 +45,6 @@ jobs:
           echo "content<<EOF" >> $GITHUB_OUTPUT
           tail -n 50 test_output.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-        outputs:
-          content: ${{ steps.testout.outputs.content }}
 
       - name: 💬 Comment on PR if Tests Failed
         if: steps.test.outputs.failed == 'true'
