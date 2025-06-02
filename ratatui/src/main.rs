@@ -48,7 +48,11 @@ impl Main {
                     }
                 }
                 "3" => {
-                    orders.update_status();
+                    println!("Enter table number:");
+                    let mut table_input = String::new();
+                    std::io::stdin().read_line(&mut table_input).unwrap();
+                    let table_id: u32 = table_input.trim().parse().unwrap_or(0);
+                    orders.update_status(table_id);
                 }
                 "4" => {
                     kitchen.prepare_order(orders);
