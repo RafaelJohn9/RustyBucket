@@ -39,9 +39,9 @@ Enter choice:
 
 ```
 📋 Tonight’s Menu:
-- Ratatouille Supreme (zucchini, eggplant, bell pepper)
-- Lightning Linguine (pasta, tomato, ⚡spicy secret sauce)
-- Fromage Fantastique (3-cheese medley, drama)
+- Ratatouille Supreme — A classic Provençal vegetable medley, artfully layered and oven-roasted. Price: $9.50
+- Lightning Linguine — Pasta tossed in a zesty tomato sauce with a shocking kick. Price: $8.50
+- Fromage Fantastique — A decadent three-cheese creation with a flair for the dramatic. Price: $11.00
 
 Bon appétit! 🍽️
 ```
