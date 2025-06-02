@@ -31,9 +31,10 @@ jobs:
         continue-on-error: true
         working-directory: ./ratatui
         run: |
-          echo "🎬 Running cargo tests..."
-          cargo test -- --nocapture 2>&1 | tee test_output.txt
-          echo "failed=$([ $? -eq 0 ] && echo "false" || echo "true")" >> $GITHUB_OUTPUT
+              echo "🎬 Running cargo tests..."
+              cargo test -- --nocapture 2>&1 | tee test_output.txt
+              TEST_EXIT_CODE=${PIPESTATUS[0]}
+              echo "failed=$([ $TEST_EXIT_CODE -eq 0 ] && echo "false" || echo "true")" >> $GITHUB_OUTPUT
 
       - name: 📦 Read test output
         id: testout
