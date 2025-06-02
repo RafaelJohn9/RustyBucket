@@ -51,10 +51,10 @@ impl Main {
                     orders.update_status();
                 }
                 "4" => {
-                    kitchen.prepare_order(&mut orders);
+                    kitchen.prepare_order(orders);
                 }
                 "5" => {
-                    kitchen.complete_order(&mut orders);
+                    kitchen.complete_order(orders);
                 }
                 "6" => {
                     println!("{}", quotes.get_random_quote());
