@@ -1,0 +1,63 @@
+name: Ratatui PR Tests
+
+on:
+  pull_request:
+    branches: [main]
+    workflow_dispatch:
+jobs:
+  run-tests:
+    name: Check PR and Run Tests
+    runs-on: ubuntu-latest
+
+    if: startsWith(github.head_ref, '') && endsWith(github.head_ref, '/ratatui')
+
+    steps:
+      - name: 🧾 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🛠️ Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: 🧪 Run Tests
+        id: test
+        working-directory: ./ratatui
+        continue-on-error: true
+        run: |
+          set +e
+          echo "🎬 Running cargo tests..."
+          TEST_OUTPUT=$(cargo test -- --nocapture 2>&1)
+          echo "$TEST_OUTPUT" > test_output.txt
+          echo "$TEST_OUTPUT"
+          echo "##[set-output name=failed::$([ $? -ne 0 ] && echo true || echo false)]"
+          echo "##[set-output name=stdout::$TEST_OUTPUT]"
+
+      - name: 💬 Comment on PR if Tests Failed
+        if: steps.test.outputs.failed == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('test_output.txt', 'utf8');
+            const jokeLines = output
+              .split('\n')
+              .filter(line => line.includes('🐀') || line.includes('🍿') || line.includes('Chef'));
+            const comment = [
+              "### 🚨 Tests Failed!",
+              "",
+              ...jokeLines.slice(-10),
+              "",
+              "🔁 Fix the issue and push again for another go at Remy's kitchen!",
+              "",
+              "> _Remember: Anyone can cook, but not everyone can assert output._"
+            ].join('\n');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

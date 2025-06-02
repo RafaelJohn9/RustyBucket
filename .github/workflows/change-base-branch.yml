@@ -1,0 +1,25 @@
+name: Create user branch and prompt base change
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  create-branch-and-comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Run create branch script
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const createBranch = require('./scripts/create_branch_on_pr.js');
+            await createBranch({ github, context, core });
