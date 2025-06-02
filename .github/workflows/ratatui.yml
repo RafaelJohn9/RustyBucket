@@ -42,17 +42,15 @@ jobs:
             const failed = '${{ steps.test.outputs.failed }}';
             if (failed === 'true') {
               const output = fs.readFileSync('test_output.txt', 'utf8');
-              const jokeLines = output
-                .split('\n')
-                .filter(line => line.includes('🐀') || line.includes('🍿') || line.includes('Chef'));
               const comment = [
-                "### 🚨 Tests Failed!",
-                "",
-                ...jokeLines.slice(-10),
-                "",
-                "🔁 Fix the issue and push again for another go at Remy's kitchen!",
-                "",
-                "> _Remember: Anyone can cook, but not everyone can assert output._"
+                "### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!",
+                        "",
+                        "```\n" + output + "\n```",
+                        "",
+                        "👨‍🍳 Remy says: 'Zut alors! The soufflé has collapsed!'",
+                        "🔁 Please whisk away the bugs and push again for another taste test in Remy's kitchen!",
+                        "",
+                        "> _Anyone can cook, but only the bravest can debug!_"
               ].join('\n');
 
               github.rest.issues.createComment({
