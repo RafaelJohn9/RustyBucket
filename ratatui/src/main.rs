@@ -243,7 +243,7 @@ impl Main {
         }
     }
     fn show_menu() {
-        println!("\n--- RustyBucket Restaurant ---");
+        println!("\n--- Remy's Restaurant ---");
         println!("~ {} ~", Quotes::new().get_random_quote());
         println!("1. View Menu");
         println!("2. Add Dish to Menu");
