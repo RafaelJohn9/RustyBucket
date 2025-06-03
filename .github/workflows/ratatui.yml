@@ -60,7 +60,7 @@ jobs:
 
       - name: 🗑️ Delete Existing Failed Test Comment
         if: steps.test.outputs.failed == 'true' && steps.find-comment-fail.outputs.comment-id != ''
-        uses: peter-evans/delete-comment@v2
+        uses: peter-evans/delete-comment@v3
         with:
           comment-id: ${{ steps.find-comment-fail.outputs.comment-id }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -95,7 +95,7 @@ jobs:
 
       - name: 🗑️ Delete Existing Passed Test Comment
         if: steps.test.outputs.failed == 'false' && steps.find-comment-pass.outputs.comment-id != ''
-        uses: peter-evans/delete-comment@v2
+        uses: peter-evans/delete-comment@v3
         with:
           comment-id: ${{ steps.find-comment-pass.outputs.comment-id }}
           token: ${{ secrets.GITHUB_TOKEN }}
