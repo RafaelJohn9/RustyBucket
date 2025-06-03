@@ -79,17 +79,28 @@ jobs:
 
             > _Anyone can cook, but only the bravest can debug!_
 
-      - name: 💬 Comment on PR if Tests Passed
+      - name: 💬 Find PR Comment for Passed Tests
+        if: steps.test.outputs.failed == 'false'
+        uses: peter-evans/find-comment@v2
+        id: find-comment-pass
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: "### 🎉 Magnifique! Tests Passed, Chef!"
+
+      - name: 💬 Create or Update Passed Test Comment
         if: steps.test.outputs.failed == 'false'
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          comment-id: ${{ steps.find-comment-pass.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
           body: |
-            ### 🎉 Magnifique! Tests Passed, Chef!
+        ### 🎉 Magnifique! Tests Passed, Chef!
 
-            👨‍🍳 Remy says: _"C'est parfait! Your code is as delightful as a perfectly prepared ratatouille!"_
+        👨‍🍳 Remy says: _"C'est parfait! Your code is as delightful as a perfectly prepared ratatouille!"_
 
-            ⭐ Keep cooking up that excellent code!
+        ⭐ Keep cooking up that excellent code!
 
-            > _In Remy's kitchen, quality code is our secret ingredient!_
+        > _In Remy's kitchen, quality code is our secret ingredient!_
