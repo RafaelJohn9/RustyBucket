@@ -118,6 +118,8 @@ You’ll use:
 
 ## 🗂️ UML Diagram
 
+> _“Developer note: My idea — follow me at your own risk. Side effects may include inspiration, confusion, or spontaneous feature creep.”_
+
 ```mermaid
 classDiagram
     class Main {
@@ -126,29 +128,27 @@ classDiagram
     }
     class Menu {
         +dishes: Vec~Dish~
-        +list_dishes()
-    }
-    class Orders {
-        +orders: Vec~Order~
-        +add_order()
-        +update_status()
-    }
-    class Kitchen {
-        +prepare_order()
-        +complete_order()
-        +current_orders: Vec~Order~
-    }
-    class Quotes {
-        +get_random_quote()
+        +add_dish(dish: Dish)
+        +new(dishes: Vec~Dish~)
     }
     class Dish {
         +name: String
-        +ingredients: Vec~String~
+        +description: String
+        +price: f64
+        +new(name: &str, description: &str, price: f64)
+    }
+    class Orders {
+        +orders: Vec~Order~
+        +new()
+        +add_order(order: Order)
+        +update_status(table: u32)
+        +get_order_for_table(table_id: u32)
     }
     class Order {
         +table: u32
         +dish: Dish
         +status: OrderStatus
+        +new(table: u32, dish: Dish)
     }
     class OrderStatus {
         <<enum>>
@@ -157,15 +157,25 @@ classDiagram
         Served
         Oops
     }
+    class Kitchen {
+        +current_orders: Orders
+        +new(current_orders: Orders)
+    }
+    class Quotes {
+        +quotes: Vec~&'static str~
+        +new()
+        +get_random_quote()
+    }
 
     Main --> Menu
     Main --> Orders
     Main --> Kitchen
     Main --> Quotes
+    Menu --> Dish
     Orders --> Order
     Order --> Dish
     Order --> OrderStatus
-    Menu --> Dish
+    Kitchen --> Orders
 ```
 
 ---
