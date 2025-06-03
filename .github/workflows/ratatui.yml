@@ -31,10 +31,10 @@ jobs:
         continue-on-error: true
         working-directory: ./ratatui
         run: |
-              echo "🎬 Running cargo tests..."
-              cargo test -- --nocapture 2>&1 | tee test_output.txt
-              TEST_EXIT_CODE=${PIPESTATUS[0]}
-              echo "failed=$([ $TEST_EXIT_CODE -eq 0 ] && echo "false" || echo "true")" >> $GITHUB_OUTPUT
+          echo "🎬 Running cargo tests..."
+          cargo test -- --nocapture 2>&1 | tee test_output.txt
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+          echo "failed=$([ $TEST_EXIT_CODE -eq 0 ] && echo "false" || echo "true")" >> $GITHUB_OUTPUT
 
       - name: 📦 Read test output
         id: testout
@@ -60,10 +60,11 @@ jobs:
 
       - name: 🗑️ Delete Existing Failed Test Comment
         if: steps.test.outputs.failed == 'true' && steps.find-comment-fail.outputs.comment-id != ''
-        uses: peter-evans/delete-comment@v3
-        with:
-          comment-id: ${{ steps.find-comment-fail.outputs.comment-id }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues/comments/${{ steps.find-comment-fail.outputs.comment-id }}
 
       - name: 💬 Post New Failed Test Comment
         if: steps.test.outputs.failed == 'true'
@@ -95,10 +96,11 @@ jobs:
 
       - name: 🗑️ Delete Existing Passed Test Comment
         if: steps.test.outputs.failed == 'false' && steps.find-comment-pass.outputs.comment-id != ''
-        uses: peter-evans/delete-comment@v3
-        with:
-          comment-id: ${{ steps.find-comment-pass.outputs.comment-id }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues/comments/${{ steps.find-comment-pass.outputs.comment-id }}
 
       - name: 💬 Post New Passed Test Comment
         if: steps.test.outputs.failed == 'false'
