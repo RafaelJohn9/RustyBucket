@@ -49,7 +49,7 @@ jobs:
             echo "content=No test output file found" >> $GITHUB_OUTPUT
           fi
 
-      - name: 💬 Update or Create PR Comment for Failed Tests
+      - name: 💬 Find PR Comment for Failed Tests
         if: steps.test.outputs.failed == 'true'
         uses: peter-evans/find-comment@v2
         id: find-comment-fail
@@ -58,14 +58,19 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: "### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!"
 
-      - name: 💬 Create or Update Failed Test Comment
+      - name: 🗑️ Delete Existing Failed Test Comment
+        if: steps.test.outputs.failed == 'true' && steps.find-comment-fail.outputs.comment-id != ''
+        uses: peter-evans/delete-comment@v2
+        with:
+          comment-id: ${{ steps.find-comment-fail.outputs.comment-id }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 💬 Post New Failed Test Comment
         if: steps.test.outputs.failed == 'true'
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          comment-id: ${{ steps.find-comment-fail.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          edit-mode: replace
           body: |
             ### 🍳 Oh là là! Tests Failed, Monsieur Chef Code!
 
@@ -88,14 +93,19 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: "### 🎉 Magnifique! Tests Passed, Chef!"
 
-      - name: 💬 Create or Update Passed Test Comment
+      - name: 🗑️ Delete Existing Passed Test Comment
+        if: steps.test.outputs.failed == 'false' && steps.find-comment-pass.outputs.comment-id != ''
+        uses: peter-evans/delete-comment@v2
+        with:
+          comment-id: ${{ steps.find-comment-pass.outputs.comment-id }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 💬 Post New Passed Test Comment
         if: steps.test.outputs.failed == 'false'
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          comment-id: ${{ steps.find-comment-pass.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          edit-mode: replace
           body: |
             ### 🎉 Magnifique! Tests Passed, Chef!
 
