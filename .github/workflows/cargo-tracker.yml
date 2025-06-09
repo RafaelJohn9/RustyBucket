@@ -1,0 +1,118 @@
+name: cargo-tracker PR Tests
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  run-tests:
+    name: Check PR and Run Tests
+    runs-on: ubuntu-latest
+
+    if: startsWith(github.head_ref, '') && endsWith(github.head_ref, '/cargo-tracker')
+
+    steps:
+      - name: 🧾 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🛠️ Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: 🧪 Run Tests
+        id: test
+        continue-on-error: true
+        working-directory: ./cargo-tracker
+        run: |
+          echo "🎬 Running cargo tests..."
+          cargo test -- --nocapture 2>&1 | tee test_output.txt
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+          echo "failed=$([ $TEST_EXIT_CODE -eq 0 ] && echo "false" || echo "true")" >> $GITHUB_OUTPUT
+
+      - name: 📦 Read test output
+        id: testout
+        working-directory: ./cargo-tracker
+        shell: bash
+        run: |
+          if [ -f test_output.txt ]; then
+            echo "content<<EOF" >> $GITHUB_OUTPUT
+            tail -n 50 test_output.txt >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "content=No test output file found" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 💬 Find PR Comment for Failed Tests
+        if: steps.test.outputs.failed == 'true'
+        uses: peter-evans/find-comment@v2
+        id: find-comment-fail
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: "### 📦 Delivery Delayed! cargo-tracker Tests Failed!"
+
+      - name: 🗑️ Delete Existing Failed Test Comment
+        if: steps.test.outputs.failed == 'true' && steps.find-comment-fail.outputs.comment-id != ''
+        run: |
+          curl -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues/comments/${{ steps.find-comment-fail.outputs.comment-id }}
+
+      - name: 💬 Post New Failed Test Comment
+        if: steps.test.outputs.failed == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### 📦 Delivery Delayed! cargo-tracker Tests Failed!
+
+            ```
+            ${{ steps.testout.outputs.content }}
+            ```
+
+            🚧 Our shipment hit a snag on the tracks!
+
+            🕵️‍♂️ The cargo inspectors found some issues. Check the log and patch things up before the next departure!
+
+            > _Even the fastest trains need maintenance to stay on track._
+
+      - name: 💬 Find PR Comment for Passed Tests
+        if: steps.test.outputs.failed == 'false'
+        uses: peter-evans/find-comment@v2
+        id: find-comment-pass
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: "### 🚀 Shipment On Schedule! cargo-tracker Tests Passed!"
+
+      - name: 🗑️ Delete Existing Passed Test Comment
+        if: steps.test.outputs.failed == 'false' && steps.find-comment-pass.outputs.comment-id != ''
+        run: |
+          curl -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues/comments/${{ steps.find-comment-pass.outputs.comment-id }}
+
+      - name: 💬 Post New Passed Test Comment
+        if: steps.test.outputs.failed == 'false'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### 🚀 Shipment On Schedule! cargo-tracker Tests Passed!
+
+            📦 All packages inspected and cleared for delivery.
+
+            ✅ The cargo is stable, the manifest is clean, and we’re on track for a smooth merge!
+
+            > _Code like cargo: well-packed, clearly labeled, and always ready for delivery._
