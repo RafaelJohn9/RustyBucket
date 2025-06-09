@@ -67,6 +67,7 @@ Follow these steps:
 > ## 🛠️ Ready to Ship?
 >
 > ![Are you ready](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjc0aGo5Ymdoamw2ZTN5Ym5sbzk5Z2UzbW9wYmVzaXN1dHR6dnN6dCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xT39Db8zIOODTppk08/giphy.gif)
+>
 
 Jump in, hack around, and make shipment tracking a breeze.
 
