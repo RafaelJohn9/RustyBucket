@@ -1,3 +1,3 @@
 # Rust Mini Projects
 
-Enjoyh :)
+Enjoy :)
