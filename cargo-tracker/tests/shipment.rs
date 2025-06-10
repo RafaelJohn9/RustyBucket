@@ -2,7 +2,10 @@ use assert_cmd::Command;
 use predicates::str::contains;
 
 fn cargo_fail_joke(context: &str) -> String {
-    format!("\n🚚 Cargo hiccuped while: {}\n💬 Try again from the loading dock!", context)
+    format!(
+        "\n🚚 Cargo hiccuped while: {}\n💬 Try again from the loading dock!",
+        context
+    )
 }
 
 #[test]
@@ -19,9 +22,11 @@ fn test_add_shipment_and_duplicate() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut cmd2 = Command::cargo_bin("cargo-tracker")?;
     let assert2 = cmd2
-        .write_stdin("add-shipment\nABC123\nMombasa\nq\nexit\n")
+        .write_stdin("add-shipment\nABC123\nMombasa\nq\nadd-shipment\nABC123\nMombasa\nq\nexit\n")
         .assert()
-        .stdout(contains("Error: Shipment with tracking ID 'ABC123' already exists."));
+        .stdout(contains(
+            "Error: Shipment with tracking ID 'ABC123' already exists.",
+        ));
 
     if let Err(_) = assert2.try_success() {
         return Err(cargo_fail_joke("detecting duplicate shipment ABC123").into());
