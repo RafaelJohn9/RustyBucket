@@ -1,9 +1,10 @@
 use chrono::{DateTime, Utc};
+use serde_json::json;
 use uuid::Uuid;
 
 #[derive(Debug)]
 pub struct Shipment {
-    pub shipment_id: String,
+    pub tracking_id: String,
     pub destination: String,
     pub packages: Vec<Package>,
     pub status: ShipmentStatus,
@@ -16,16 +17,15 @@ impl Shipment {
         status: ShipmentStatus,
         destination: String,
         time_of_departure: Option<DateTime<Utc>>,
-        time_of_arrival: Option<DateTime<Utc>>,
-        shipment_id: String,
+        tracking_id: String,
     ) -> Self {
         Self {
             packages: Vec::new(),
-            shipment_id,
+            tracking_id,
             destination,
             status,
             time_of_departure,
-            time_of_arrival,
+            time_of_arrival: None,
         }
     }
 
@@ -33,32 +33,28 @@ impl Shipment {
         self.packages.push(package);
     }
 
-    pub fn remove_package(&mut self, package_id: Uuid) -> Option<Package> {
-        if let Some(pos) = self.packages.iter().position(|p| p.id == package_id) {
-            Some(self.packages.remove(pos))
-        } else {
-            None
-        }
-    }
+    pub fn to_json_str(&self) -> String {
+        let packages_json = self
+            .packages
+            .iter()
+            .map(|p| {
+                json!({
+                    "id": p.id.to_string(),
+                    "description": p.description,
+                })
+            })
+            .collect::<Vec<_>>();
 
-    pub fn update_package(&mut self, package_id: Uuid, new_description: String) -> bool {
-        if let Some(pkg) = self.packages.iter_mut().find(|p| p.id == package_id) {
-            pkg.description = new_description;
-            true
-        } else {
-            false
-        }
-    }
+        let json_obj = json!({
+            "tracking_id": self.tracking_id,
+            "destination": self.destination,
+            "status": format!("{:?}", self.status),
+            "time_of_departure": self.time_of_departure.map(|t| t.to_rfc3339()),
+            "time_of_arrival": self.time_of_arrival.map(|t| t.to_rfc3339()),
+            "packages": packages_json,
+        });
 
-    pub fn update_status(&mut self, status_str: &str) -> bool {
-        match status_str {
-            "Pending" => self.status = ShipmentStatus::Pending,
-            "InTransit" => self.status = ShipmentStatus::InTransit,
-            "Delivered" => self.status = ShipmentStatus::Delivered,
-            "Lost" => self.status = ShipmentStatus::Lost,
-            _ => return false,
-        }
-        true
+        json_obj.to_string()
     }
 }
 

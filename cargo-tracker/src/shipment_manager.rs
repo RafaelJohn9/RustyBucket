@@ -1,4 +1,4 @@
-use crate::shipment::{Package, Shipment, ShipmentStatus};
+use crate::shipment::{Shipment, ShipmentStatus};
 use std::collections::HashMap;
 
 pub struct ShipmentManager {
@@ -17,23 +17,16 @@ impl ShipmentManager {
         status: ShipmentStatus,
         destination: String,
         time_of_departure: Option<chrono::DateTime<chrono::Utc>>,
-        time_of_arrival: Option<chrono::DateTime<chrono::Utc>>,
-        shipment_id: Option<String>,
+        tracking_id: Option<String>,
     ) -> &mut Shipment {
-        let id = shipment_id.unwrap_or_else(|| uuid::Uuid::new_v4().to_string());
-        let shipment = Shipment::new(
-            status,
-            destination,
-            time_of_departure,
-            time_of_arrival,
-            id.clone(),
-        );
+        let id = tracking_id.unwrap_or_else(|| uuid::Uuid::new_v4().to_string());
+        let shipment = Shipment::new(status, destination, time_of_departure, id.clone());
         self.shipments.insert(id.clone(), shipment);
         self.shipments.get_mut(&id).unwrap()
     }
 
-    pub fn get_shipment(&mut self, shipment_id: &str) -> Option<&mut Shipment> {
-        self.shipments.get_mut(shipment_id)
+    pub fn get_shipment(&mut self, tracking_id: &str) -> Option<&mut Shipment> {
+        self.shipments.get_mut(tracking_id)
     }
 
     /// List all shipments, with optional status filter.
