@@ -41,13 +41,20 @@ fn main() {
             "add-shipment" => {
                 // Create a new shipment
                 let tracking_id = read_input("Please enter the Tracking ID: ");
+                if manager.get_shipment(&tracking_id).is_some() {
+                    println!(
+                        "Error: Shipment with tracking ID '{}' already exists.",
+                        tracking_id
+                    );
+                    continue;
+                }
                 let destination = read_input("Please enter the destination: ");
                 let status = ShipmentStatus::Pending;
                 let time_of_arrival = Some(chrono::Utc::now());
                 let shipment_id = if tracking_id.is_empty() {
                     None
                 } else {
-                    Some(tracking_id)
+                    Some(tracking_id.clone())
                 };
                 let shipment =
                     manager.create_shipment(status, destination, time_of_arrival, shipment_id);
@@ -115,7 +122,9 @@ fn main() {
                             }
                             "lost" => ShipmentStatus::Lost,
                             _ => {
-                                println!("Invalid status entered.");
+                                println!(
+                                    "Error: Invalid status. Valid options are: Pending, InTransit, Delivered, Lost."
+                                );
                                 return;
                             }
                         };
@@ -154,15 +163,15 @@ fn main() {
                     "Filter by status; Pending, InTransit, Delivered, Lost: (leave empty for all): ",
                 );
 
-                let filter = filter.trim().to_lowercase();
-                let status_filter = match filter.as_str() {
+                let filter_trimmed = filter.trim().to_lowercase();
+                let status_filter = match filter_trimmed.as_str() {
                     "" => None,
                     "pending" => Some(ShipmentStatus::Pending),
                     "intransit" => Some(ShipmentStatus::InTransit),
                     "delivered" => Some(ShipmentStatus::Delivered),
                     "lost" => Some(ShipmentStatus::Lost),
                     _ => {
-                        println!("No such status '{}'. Showing all shipments.", filter);
+                        println!("No shipments found for status '{}'.", filter);
                         None
                     }
                 };
@@ -203,7 +212,7 @@ fn main() {
                 exit(0);
             }
             "" => continue,
-            _ => println!("Unknown command. Type 'help' to see available commands."),
+            _ => println!("'{}' is not a valid command.", command),
         }
     }
 }
