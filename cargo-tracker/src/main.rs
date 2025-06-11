@@ -88,7 +88,7 @@ fn main() {
                 let tracking_id = read_input("Enter the Tracking ID of the shipment: ");
                 if tracking_id.is_empty() {
                     println!("Tracking ID cannot be empty.");
-                    return;
+                    continue;
                 }
                 match manager.get_shipment(&tracking_id) {
                     Some(shipment) => {
