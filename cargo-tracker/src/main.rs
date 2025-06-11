@@ -50,14 +50,14 @@ fn main() {
                 }
                 let destination = read_input("Please enter the destination: ");
                 let status = ShipmentStatus::Pending;
-                let time_of_arrival = Some(chrono::Utc::now());
+                let time_of_departure = Some(chrono::Utc::now());
                 let shipment_id = if tracking_id.is_empty() {
                     None
                 } else {
                     Some(tracking_id.clone())
                 };
                 let shipment =
-                    manager.create_shipment(status, destination, time_of_arrival, shipment_id);
+                    manager.create_shipment(status, destination, time_of_departure, shipment_id);
                 println!("Shipment Created\n\n");
 
                 // Let's add packages to the shipment
