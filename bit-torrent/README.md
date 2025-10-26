@@ -10,7 +10,7 @@ The following resources helped me learn the protocol and its components:
 
 - [**Build-Your-Own-X** specifically on BitTorrent](https://github.com/RafaelJohn9/build-your-own-x?tab=readme-ov-file#build-your-own-bittorrent-client)
 - [**Mark U Seliasson Article** on Building Bit Torrent in Python](https://markuseliasson.se/article/bittorrent-in-python/)
-- [**Sean Joflynn** - Research on BitTorrent](https://www.seanjoflynn.com/research/bittorrent.html)
+- [**Seán O'Flynn** - Research on BitTorrent](https://www.seanjoflynn.com/research/bittorrent.html)
 
 ---
 
@@ -30,7 +30,7 @@ The following resources helped me learn the protocol and its components:
 ##  Progress Checklist
 
 
-- [ ] Set up project directory and basic file structure
+- [x] Set up project directory and basic file structure
 - [ ] Research and document BitTorrent protocol basics
 - [ ] Implement `.torrent` file parser
 - [ ] Implement handshake and peer connection logic
