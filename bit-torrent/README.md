@@ -31,7 +31,7 @@ The following resources helped me learn the protocol and its components:
 
 
 - [x] Set up project directory and basic file structure
-- [ ] Research and document BitTorrent protocol basics
+- [x] Research and document BitTorrent protocol basics
 - [ ] Implement `.torrent` file parser
 - [ ] Implement handshake and peer connection logic
 - [ ] Implement piece request and data exchange
