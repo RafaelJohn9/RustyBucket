@@ -1,5 +1,4 @@
 use std::collections::BTreeMap;
-use std::str;
 
 #[derive(Debug)]
 pub enum Bencode {
