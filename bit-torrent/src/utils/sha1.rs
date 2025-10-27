@@ -75,6 +75,12 @@ pub fn sha1(data: &[u8]) -> [u8; 20] {
     digest
 }
 
+
+/// Compute SHA-1 for each item in `inputs` and return a Vec of 20-byte digests.
+pub fn sha1_batch<T: AsRef<[u8]>>(inputs: &[T]) -> Vec<[u8; 20]> {
+    inputs.iter().map(|item| sha1(item.as_ref())).collect()
+}
+
 /// Return lowercase hex representation of SHA-1 digest for input bytes.
 pub fn sha1_hex(data: &[u8]) -> String {
     bytes_to_hex(&sha1(data))

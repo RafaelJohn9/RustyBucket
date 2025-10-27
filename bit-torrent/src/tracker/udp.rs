@@ -1,6 +1,10 @@
 use std::error::Error;
 use std::net::{SocketAddr, ToSocketAddrs, UdpSocket};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::collections::HashSet;
+
+use crate::torrent::Torrent;
+use crate::utils::sha1;
 
 const PROTOCOL_ID: u64 = 0x41727101980u64;
 const CONNECT_ACTION: u32 = 0;
@@ -133,4 +137,84 @@ pub fn udp_trackers_announce(
     let announce_req = build_announce_request(connection_id, tx2, info_hash, peer_id, downloaded, left, uploaded, port);
     socket.send(&announce_req)?;
     recv_announce(&socket, tx2)
+}
+
+pub fn udp_announce_from_torrent(
+    torrent: &Torrent,
+    port: u16,
+) -> Result<Vec<std::net::SocketAddr>, Box<dyn Error>> {
+
+    // compute info_hash = SHA1(info.raw) using crate::utils::sha1
+    let info_raw = &torrent.info.raw;
+    let digest = sha1(info_raw);
+    let mut info_hash = [0u8; 20];
+    info_hash.copy_from_slice(&digest[..20]);
+
+    // generate a 20-byte peer id: prefix + time/pid/counter mix
+    let mut peer_id = [0u8; 20];
+    let prefix = b"-RB0001-"; // client id
+    let mut off = 0usize;
+    peer_id[..prefix.len()].copy_from_slice(prefix);
+    off += prefix.len();
+
+    let time_nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_nanos() as u128)
+        .unwrap_or(0);
+    let pid = std::process::id() as u128;
+    let counter = TX_COUNTER.load(std::sync::atomic::Ordering::Relaxed) as u128;
+
+    let mut mix = time_nanos ^ (pid << 16) ^ (counter.wrapping_mul(0x9E3779B1u128));
+    while off < 20 {
+        peer_id[off] = (mix & 0xFF) as u8;
+        mix >>= 8;
+        off += 1;
+    }
+
+    // prepare announce candidate URLs (announce + announce_list)
+    let mut urls = Vec::new();
+    if let Some(ref a) = torrent.announce {
+        urls.push(a.clone());
+    }
+    for a in &torrent.announce_list {
+        urls.push(a.clone());
+    }
+
+    if urls.is_empty() {
+        return Err("no trackers in torrent metadata".into());
+    }
+
+    // announce parameters
+    let left = torrent.info.length.unwrap_or(0) as u64;
+    let downloaded = 0u64;
+    let uploaded = 0u64;
+
+    let mut seen = HashSet::new();
+    let mut peers = Vec::new();
+    let mut saw_udp = false;
+
+    for url in urls {
+        if !url.starts_with("udp://") {
+            continue;
+        }
+        saw_udp = true;
+        match udp_trackers_announce(&url, &info_hash, &peer_id, port, left, downloaded, uploaded) {
+            Ok(found) => {
+                for p in found {
+                    if seen.insert(p) {
+                        peers.push(p);
+                    }
+                }
+            }
+            Err(_) => {
+                // ignore individual tracker errors and try others
+            }
+        }
+    }
+
+    if !saw_udp {
+        return Err("no udp trackers found in announce/announce_list".into());
+    }
+
+    Ok(peers)
 }
