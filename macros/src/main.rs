@@ -1,3 +1,6 @@
-fn main() {
-    println!("Hello, world!");
+#[macro_use]
+mod hello_macro;
+
+fn main(){
+    hello!();
 }
