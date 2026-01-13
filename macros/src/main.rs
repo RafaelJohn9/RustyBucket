@@ -3,6 +3,7 @@ mod greet_someone;
 mod add;
 mod reprint;
 mod dbg_if;
+mod sum;
 
 fn main(){
     hello!();
@@ -17,4 +18,7 @@ fn main(){
     dbg_if!(true, "This is a debug line. It should be printed.");
     dbg_if!(false, "This is a debug line. It should not be printed :) .");
     
+    // sum
+    println!("2, 4, 4, 5 sum is {}", sum!(2, 4, 4, 5));
+
 }
